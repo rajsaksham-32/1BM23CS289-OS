@@ -1,0 +1,87 @@
+#include <stdio.h>
+
+int process[4] = {1, 2, 3, 4};
+int at[4] = {0, 8, 3, 5}; 
+int bt[4] = {7, 3, 4, 6};
+int ct[4];
+int tat[4];
+int wt[4];
+
+void sort() {
+    for (int i = 0; i < 4 - 1; i++) {
+        for (int j = 0; j < 4 - 1 - i; j++) {
+            if (at[j] > at[j + 1]) {
+                int temp1 = bt[j];
+                bt[j] = bt[j+1];
+                bt[j+1] = temp1;
+
+                int temp = at[j];
+                at[j] = at[j + 1];
+                at[j + 1] = temp;
+
+                int temp2 = process[j];
+                process[j] = process[j+1];
+                process[j+1] = temp2;
+            }
+        }
+    }
+}
+
+void completedTime() {
+    sort(at);
+    ct[0] = bt[0];
+    for(int i = 1; i<4; i++){
+        ct[i] = ct[i-1] + bt[i]; 
+    }
+}
+
+void turnAroundTime() {
+    sort(at);
+    for(int i = 0; i<4; i++) {
+        tat[i] = ct[i] - at[i];
+    }
+}
+
+void waitingTime() {
+    sort(at);
+    for(int i = 0; i<4; i++) {
+        wt[i] = tat[i] - bt[i];
+    }
+}
+
+void displayTable() {
+    printf("\n----------------------------------------------------------------------------------------------\n");
+    printf("| Process | Arrival Time | Burst Time | Completion Time | Turnaround Time | Waiting Time |\n");
+    printf("-------------------------------------------------------------------------------------------------\n");
+
+    for (int i = 0; i < 4; i++) {
+        printf("|   %2d    |      %2d      |      %2d     |       %2d        |        %2d       |      %2d       |\n",
+               process[i], at[i], bt[i], ct[i], tat[i], wt[i]);
+    }
+
+    printf("-------------------------------------------------------------------------------------------------\n");
+}
+
+void displayTable1() {
+    printf("\n-----------------------------------------\n");
+    printf("| Process | Arrival Time | Burst Time |\n");
+    printf("--------------------------------------------\n");
+
+    for (int i = 0; i < 4; i++) {
+        printf("|   %2d    |      %2d      |      %2d     |\n",
+               process[i], at[i], bt[i]);
+    }
+
+    printf("------------------------------------------------\n");
+}
+
+int main() {
+    printf("Before FCFS");
+    displayTable1();
+    completedTime();
+    turnAroundTime();
+    waitingTime();
+    printf("After FCFS: ");
+    displayTable();
+
+}
