@@ -1,0 +1,78 @@
+#include <stdio.h>
+
+struct Task {
+    int pid;
+    int burst;
+    int deadline;
+    int period;
+};
+
+int main() {
+    int n;
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    struct Task tasks[n];
+    int i, time = 0, total_time = 0;
+
+    printf("Enter the CPU burst times: ");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &tasks[i].burst);
+        tasks[i].pid = i + 1;
+    }
+
+    printf("Enter the deadlines: ");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &tasks[i].deadline);
+    }
+
+    printf("Enter the time periods: ");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &tasks[i].period);
+    }
+
+    // Calculate total simulation time (LCM would be ideal, but we'll just use sum of periods for simplicity)
+    for (i = 0; i < n; i++) {
+        if (total_time < tasks[i].period)
+            total_time = tasks[i].period;
+    }
+    total_time *= 2; // run for two hyperperiods worth of time, or adjust as needed
+
+    printf("\nEarliest Deadline Scheduling:\n");
+    printf("PID\tBurst\tDeadline\n");
+    for (i = 0; i < n; i++) {
+        printf("%d\t%d\t%d\n", tasks[i].pid, tasks[i].burst, tasks[i].deadline);
+    }
+
+    printf("Scheduling occurs for %d ms\n", tasks[0].burst + tasks[1].burst + tasks[2].burst);
+
+    int current_time = 0;
+    int completed = 0;
+    int remaining_burst[n];
+    for (i = 0; i < n; i++) {
+        remaining_burst[i] = tasks[i].burst;
+    }
+
+    while (completed < n) {
+        // Find task with earliest deadline and remaining burst
+        int min_deadline = 9999, selected = -1;
+        for (i = 0; i < n; i++) {
+            if (remaining_burst[i] > 0 && tasks[i].deadline < min_deadline) {
+                min_deadline = tasks[i].deadline;
+                selected = i;
+            }
+        }
+
+        if (selected == -1)
+            break;
+
+        while (remaining_burst[selected] > 0) {
+            printf("%dms : Task %d is running.\n", current_time, tasks[selected].pid);
+            current_time++;
+            remaining_burst[selected]--;
+        }
+        completed++;
+    }
+
+    return 0;
+}
